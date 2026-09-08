@@ -1,2 +1,129 @@
-<h1>Dashboard</h1>
-<p>Bienvenue dans votre espace de gestion 🎉</p>
+<div class="dashboard">
+    <h1 class="page-title">Dashboard</h1>
+  
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-icon">📦</span>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.totalOrders }}</span>
+          <span class="stat-label">Total des commandes</span>
+        </div>
+      </div>
+  
+      <div class="stat-card">
+        <span class="stat-icon">⏳</span>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.ordersInProgress }}</span>
+          <span class="stat-label">Commandes en cours</span>
+        </div>
+      </div>
+  
+      <div class="stat-card">
+        <span class="stat-icon">✅</span>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.ordersCompleted }}</span>
+          <span class="stat-label">Commandes terminées</span>
+        </div>
+      </div>
+  
+      <div class="stat-card alert">
+        <span class="stat-icon">⚠️</span>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.ordersLate }}</span>
+          <span class="stat-label">Commandes en retard</span>
+        </div>
+      </div>
+  
+      <div class="stat-card">
+        <span class="stat-icon">👕</span>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.totalProducts }}</span>
+          <span class="stat-label">Total des produits</span>
+        </div>
+      </div>
+  
+      <div class="stat-card alert">
+        <span class="stat-icon">📉</span>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.lowStockProducts }}</span>
+          <span class="stat-label">Produits stock faible</span>
+        </div>
+      </div>
+  
+      <div class="stat-card">
+        <span class="stat-icon">🛠️</span>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.tasksInProgress }}</span>
+          <span class="stat-label">Tâches en cours</span>
+        </div>
+      </div>
+  
+      <div class="stat-card alert">
+        <span class="stat-icon">🔴</span>
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.tasksLate }}</span>
+          <span class="stat-label">Tâches en retard</span>
+        </div>
+      </div>
+    </div>
+  
+    <div class="bottom-grid">
+  
+      <div class="panel">
+        <h2 class="panel-title">Dernières commandes</h2>
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>N°</th>
+              <th>Client</th>
+              <th>Produit</th>
+              <th>Statut</th>
+              <th>Livraison</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of recentOrders">
+              <td>{{ order.orderNumber }}</td>
+              <td>{{ order.client }}</td>
+              <td>{{ order.product }}</td>
+              <td>
+                <span class="badge" [ngClass]="getStatusClass(order.status)">
+                  {{ order.status }}
+                </span>
+              </td>
+              <td>{{ order.deliveryDate }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+  
+      <div class="panel">
+        <h2 class="panel-title">Tâches proches de leur échéance</h2>
+        <ul class="task-list">
+          <li *ngFor="let task of upcomingTasks">
+            <div class="task-info">
+              <span class="task-title">{{ task.title }}</span>
+              <span class="task-date">Échéance : {{ task.dueDate }}</span>
+            </div>
+            <span class="badge" [ngClass]="getPriorityClass(task.priority)">
+              {{ task.priority }}
+            </span>
+          </li>
+        </ul>
+      </div>
+  
+      <div class="panel">
+        <h2 class="panel-title">Alertes de stock</h2>
+        <ul class="stock-list">
+          <li *ngFor="let item of stockAlerts">
+            <div class="stock-info">
+              <span class="stock-name">{{ item.productName }}</span>
+              <span class="stock-qty">{{ item.currentQuantity }} / {{ item.minQuantity }} min</span>
+            </div>
+            <span class="badge status-late">🔴 Faible</span>
+          </li>
+        </ul>
+      </div>
+  
+    </div>
+  </div>
