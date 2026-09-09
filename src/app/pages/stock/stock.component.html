@@ -1,0 +1,147 @@
+<div class="stock-page">
+    <div class="page-header">
+      <h1 class="page-title">Stock</h1>
+      <button class="btn-primary" (click)="openAddItemModal()">+ Ajouter un article</button>
+    </div>
+  
+    <div class="tabs">
+      <button class="tab-btn" [class.active]="activeTab === 'items'" (click)="activeTab = 'items'">Articles</button>
+      <button class="tab-btn" [class.active]="activeTab === 'history'" (click)="activeTab = 'history'">Historique</button>
+    </div>
+  
+    <!-- Onglet Articles -->
+    <div *ngIf="activeTab === 'items'">
+      <div class="filters-bar">
+        <input
+          type="text"
+          class="search-input"
+          placeholder="Rechercher un article..."
+          [(ngModel)]="searchTerm"
+        />
+  
+        <select class="filter-select" [(ngModel)]="selectedCategory">
+          <option value="Toutes">Toutes les catégories</option>
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+      </div>
+  
+      <div class="panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nom</th>
+              <th>Catégorie</th>
+              <th>Quantité disponible</th>
+              <th>Unité</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of filteredItems">
+              <td>{{ item.nom }}</td>
+              <td>{{ item.categorie }}</td>
+              <td class="qty-cell">{{ item.quantite }}</td>
+              <td>{{ item.unite }}</td>
+              <td class="actions-cell">
+                <button class="btn-move in" (click)="openMovementModal(item, 'Entrée')">+ Entrée</button>
+                <button class="btn-move out" (click)="openMovementModal(item, 'Sortie')">- Sortie</button>
+                <button class="btn-icon" (click)="openEditItemModal(item)">✏️</button>
+                <button class="btn-icon delete" (click)="deleteItem(item.id)">🗑️</button>
+              </td>
+            </tr>
+            <tr *ngIf="filteredItems.length === 0">
+              <td colspan="5" class="empty-row">Aucun article trouvé.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  
+    <!-- Onglet Historique -->
+    <div *ngIf="activeTab === 'history'">
+      <div class="panel">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Article</th>
+              <th>Type</th>
+              <th>Quantité</th>
+              <th>Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let mvt of movements">
+              <td>{{ mvt.itemNom }}</td>
+              <td>
+                <span class="badge" [ngClass]="mvt.type === 'Entrée' ? 'badge-in' : 'badge-out'">
+                  {{ mvt.type }}
+                </span>
+              </td>
+              <td>{{ mvt.quantite }}</td>
+              <td>{{ mvt.date }}</td>
+            </tr>
+            <tr *ngIf="movements.length === 0">
+              <td colspan="4" class="empty-row">Aucun mouvement enregistré.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal Ajout / Modification article -->
+  <div class="modal-overlay" *ngIf="showItemModal" (click)="closeItemModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <h2>{{ isEditMode ? "Modifier l'article" : 'Ajouter un article' }}</h2>
+  
+      <div class="form-group">
+        <label>Nom</label>
+        <input type="text" [(ngModel)]="currentItem.nom" placeholder="Nom de l'article" />
+      </div>
+  
+      <div class="form-group">
+        <label>Catégorie</label>
+        <select [(ngModel)]="currentItem.categorie">
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+      </div>
+  
+      <div class="form-row">
+        <div class="form-group">
+          <label>Quantité</label>
+          <input type="number" [(ngModel)]="currentItem.quantite" placeholder="0" />
+        </div>
+        <div class="form-group">
+          <label>Unité</label>
+          <input type="text" [(ngModel)]="currentItem.unite" placeholder="m, unités, bobines..." />
+        </div>
+      </div>
+  
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="closeItemModal()">Annuler</button>
+        <button class="btn-primary" (click)="saveItem()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Modal Mouvement (Entrée/Sortie) -->
+  <div class="modal-overlay" *ngIf="showMovementModal" (click)="closeMovementModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <h2>{{ movementType === 'Entrée' ? 'Ajouter une entrée' : 'Ajouter une sortie' }}</h2>
+  
+      <div class="form-group">
+        <label>Quantité</label>
+        <input type="number" [(ngModel)]="movementQuantity" placeholder="1" min="1" />
+      </div>
+  
+      <div class="form-group">
+        <label>Date</label>
+        <input type="text" [(ngModel)]="movementDate" placeholder="JJ/MM/AAAA" />
+      </div>
+  
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="closeMovementModal()">Annuler</button>
+        <button class="btn-primary" (click)="saveMovement()">Confirmer</button>
+      </div>
+    </div>
+  </div>
