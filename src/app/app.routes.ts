@@ -6,6 +6,7 @@ import { ClientsComponent } from './pages/clients/clients.component';
 import { ProductsComponent } from './pages/products/products.component';
 import { OrdersComponent } from './pages/orders/orders.component';
 import { ProductionComponent } from './pages/production/production.component';
+import { TasksComponent } from './pages/tasks/tasks.component';
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
   {
@@ -18,6 +19,7 @@ export const routes: Routes = [
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'orders', component: OrdersComponent },
       { path: 'production', component: ProductionComponent },
+      { path: 'tasks', component: TasksComponent },
     ],
   },
   { path: '**', redirectTo: 'login' },

@@ -1,0 +1,141 @@
+<div class="tasks-page">
+    <div class="page-header">
+      <h1 class="page-title">Tâches</h1>
+      <button class="btn-primary" (click)="openAddModal()">+ Ajouter une tâche</button>
+    </div>
+  
+    <div class="filters-bar">
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Rechercher par titre..."
+        [(ngModel)]="searchTerm"
+      />
+  
+      <select class="filter-select" [(ngModel)]="selectedStatus">
+        <option value="Tous">Tous les statuts</option>
+        <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+      </select>
+  
+      <select class="filter-select" [(ngModel)]="selectedPriority">
+        <option value="Toutes">Toutes les priorités</option>
+        <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+      </select>
+    </div>
+  
+    <div class="legend">
+      <span class="legend-item"><span class="dot dot-late"></span> En retard</span>
+      <span class="legend-item"><span class="dot dot-soon"></span> Échéance proche</span>
+    </div>
+  
+    <div class="panel">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Titre</th>
+            <th>Production</th>
+            <th>Responsable</th>
+            <th>Priorité</th>
+            <th>Statut</th>
+            <th>Date début</th>
+            <th>Date limite</th>
+            <th>Alerte</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let task of filteredTasks"
+              [ngClass]="{
+                'row-late': isLate(task),
+                'row-soon': isDueSoon(task)
+              }">
+            <td>{{ task.titre }}</td>
+            <td>{{ task.productionAssociee }}</td>
+            <td>{{ task.responsable }}</td>
+            <td>
+              <span class="badge" [ngClass]="getPriorityClass(task.priorite)">
+                {{ task.priorite }}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [ngClass]="getStatusClass(task.statut)">
+                {{ task.statut }}
+              </span>
+            </td>
+            <td>{{ task.dateDebut }}</td>
+            <td>{{ task.dateLimite }}</td>
+            <td>
+              <span *ngIf="isLate(task)" class="alert-text alert-late">Cette tâche est en retard.</span>
+              <span *ngIf="isDueSoon(task)" class="alert-text alert-soon">Échéance demain.</span>
+            </td>
+            <td class="actions-cell">
+              <button class="btn-icon" (click)="openEditModal(task)">✏️</button>
+              <button class="btn-icon delete" (click)="deleteTask(task.id)">🗑️</button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredTasks.length === 0">
+            <td colspan="9" class="empty-row">Aucune tâche trouvée.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Modal Ajout / Modification -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <h2>{{ isEditMode ? 'Modifier la tâche' : 'Ajouter une tâche' }}</h2>
+  
+      <div class="form-group">
+        <label>Titre</label>
+        <input type="text" [(ngModel)]="currentTask.titre" placeholder="Titre de la tâche" />
+      </div>
+  
+      <div class="form-group">
+        <label>Description</label>
+        <input type="text" [(ngModel)]="currentTask.description" placeholder="Description" />
+      </div>
+  
+      <div class="form-row">
+        <div class="form-group">
+          <label>Production associée</label>
+          <input type="text" [(ngModel)]="currentTask.productionAssociee" placeholder="CMD-0000" />
+        </div>
+        <div class="form-group">
+          <label>Responsable</label>
+          <input type="text" [(ngModel)]="currentTask.responsable" placeholder="Nom" />
+        </div>
+      </div>
+  
+      <div class="form-row">
+        <div class="form-group">
+          <label>Priorité</label>
+          <select [(ngModel)]="currentTask.priorite">
+            <option *ngFor="let p of priorities" [value]="p">{{ p }}</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Statut</label>
+          <select [(ngModel)]="currentTask.statut">
+            <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+          </select>
+        </div>
+      </div>
+  
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date début</label>
+          <input type="text" [(ngModel)]="currentTask.dateDebut" placeholder="JJ/MM/AAAA" />
+        </div>
+        <div class="form-group">
+          <label>Date limite</label>
+          <input type="text" [(ngModel)]="currentTask.dateLimite" placeholder="JJ/MM/AAAA" />
+        </div>
+      </div>
+  
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="closeModal()">Annuler</button>
+        <button class="btn-primary" (click)="saveTask()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
