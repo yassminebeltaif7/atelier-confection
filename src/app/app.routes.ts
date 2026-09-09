@@ -3,6 +3,7 @@ import { LoginComponent } from './pages/login/login.component';
 import { MainLayoutComponent } from './components/main-layout/main-layout.component';
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ClientsComponent } from './pages/clients/clients.component';
+import { ProductsComponent } from './pages/products/products.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -12,6 +13,7 @@ export const routes: Routes = [
     children: [
       { path: 'dashboard', component: DashboardComponent },
       { path: 'clients', component: ClientsComponent },
+      { path: 'products', component: ProductsComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
     ],
   },

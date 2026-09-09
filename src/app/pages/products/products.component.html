@@ -1,0 +1,122 @@
+<div class="products-page">
+    <div class="page-header">
+      <h1 class="page-title">Produits</h1>
+      <button class="btn-primary" (click)="openAddModal()">+ Ajouter un produit</button>
+    </div>
+  
+    <div class="filters-bar">
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Rechercher par nom ou référence..."
+        [(ngModel)]="searchTerm"
+      />
+  
+      <select class="filter-select" [(ngModel)]="selectedCategory">
+        <option value="Toutes">Toutes les catégories</option>
+        <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+      </select>
+    </div>
+  
+    <div class="panel">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nom</th>
+            <th>Référence</th>
+            <th>Catégorie</th>
+            <th>Taille</th>
+            <th>Couleur</th>
+            <th>Quantité</th>
+            <th>Stock min.</th>
+            <th>État stock</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let product of filteredProducts">
+            <td>{{ product.nom }}</td>
+            <td>{{ product.reference }}</td>
+            <td>{{ product.categorie }}</td>
+            <td>{{ product.taille }}</td>
+            <td>{{ product.couleur }}</td>
+            <td>{{ product.quantite }}</td>
+            <td>{{ product.stockMinimum }}</td>
+            <td>
+              <span class="badge" [ngClass]="{
+                'stock-normal': getStockLevel(product) === 'normal',
+                'stock-low': getStockLevel(product) === 'low',
+                'stock-out': getStockLevel(product) === 'out'
+              }">
+                <ng-container [ngSwitch]="getStockLevel(product)">
+                  <span *ngSwitchCase="'normal'">🟢 Normal</span>
+                  <span *ngSwitchCase="'low'">🟠 Faible</span>
+                  <span *ngSwitchCase="'out'">🔴 Rupture</span>
+                </ng-container>
+              </span>
+            </td>
+            <td class="actions-cell">
+              <button class="btn-icon" (click)="openEditModal(product)">✏️</button>
+              <button class="btn-icon delete" (click)="deleteProduct(product.id)">🗑️</button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredProducts.length === 0">
+            <td colspan="9" class="empty-row">Aucun produit trouvé.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Modal Ajout / Modification -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <h2>{{ isEditMode ? 'Modifier le produit' : 'Ajouter un produit' }}</h2>
+  
+      <div class="form-group">
+        <label>Nom</label>
+        <input type="text" [(ngModel)]="currentProduct.nom" placeholder="Nom du produit" />
+      </div>
+  
+      <div class="form-group">
+        <label>Référence</label>
+        <input type="text" [(ngModel)]="currentProduct.reference" placeholder="Référence" />
+      </div>
+  
+      <div class="form-group">
+        <label>Catégorie</label>
+        <select [(ngModel)]="currentProduct.categorie">
+          <option *ngFor="let cat of categories" [value]="cat">{{ cat }}</option>
+        </select>
+      </div>
+  
+      <div class="form-row">
+        <div class="form-group">
+          <label>Taille</label>
+          <input type="text" [(ngModel)]="currentProduct.taille" placeholder="Taille" />
+        </div>
+  
+        <div class="form-group">
+          <label>Couleur</label>
+          <input type="text" [(ngModel)]="currentProduct.couleur" placeholder="Couleur" />
+        </div>
+      </div>
+  
+      <div class="form-row">
+        <div class="form-group">
+          <label>Quantité</label>
+          <input type="number" [(ngModel)]="currentProduct.quantite" placeholder="0" />
+        </div>
+  
+        <div class="form-group">
+          <label>Stock minimum</label>
+          <input type="number" [(ngModel)]="currentProduct.stockMinimum" placeholder="0" />
+        </div>
+      </div>
+  
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="closeModal()">Annuler</button>
+        <button class="btn-primary" (click)="saveProduct()">Enregistrer</button>
+      </div>
+    </div>
+  </div>
