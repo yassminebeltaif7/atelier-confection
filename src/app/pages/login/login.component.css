@@ -4,16 +4,18 @@
     justify-content: center;
     width: 100%;
     min-height: 100vh;
-    background-color: #f1f5f9;
+    background-color: var(--bg-main);
+    transition: background-color 0.2s ease;
   }
   
   .login-card {
-    background-color: #ffffff;
+    background-color: var(--bg-card);
     padding: 40px;
     border-radius: 12px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
     width: 100%;
     max-width: 380px;
+    transition: background-color 0.2s ease;
   }
   
   .login-header {
@@ -27,13 +29,13 @@
   
   .login-header h1 {
     font-size: 20px;
-    color: #1e293b;
+    color: var(--text-primary);
     margin: 8px 0 4px;
   }
   
   .login-header p {
     font-size: 13px;
-    color: #64748b;
+    color: var(--text-secondary);
     margin: 0;
   }
   
@@ -44,7 +46,7 @@
   .form-group label {
     display: block;
     font-size: 13px;
-    color: #334155;
+    color: var(--text-secondary);
     margin-bottom: 6px;
     font-weight: 500;
   }
@@ -52,10 +54,12 @@
   .form-group input {
     width: 100%;
     padding: 10px 12px;
-    border: 1px solid #cbd5e1;
+    border: 1px solid var(--input-border);
     border-radius: 8px;
     font-size: 14px;
     box-sizing: border-box;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
   }
   
   .form-group input:focus {

@@ -9,3 +9,34 @@
     width: 100%;
     font-family: 'Segoe UI', Arial, sans-serif;
   }
+  
+  /* Variables - Mode Clair (par défaut) */
+  :root {
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-sidebar: #1e293b;
+    --text-primary: #1e293b;
+    --text-secondary: #64748b;
+    --border-color: #e2e8f0;
+    --input-bg: #ffffff;
+    --input-border: #cbd5e1;
+    --hover-bg: #f1f5f9;
+  }
+  
+  /* Variables - Mode Sombre */
+  body.dark-mode {
+    --bg-main: #0f172a;
+    --bg-card: #1e293b;
+    --bg-sidebar: #0f172a;
+    --text-primary: #f1f5f9;
+    --text-secondary: #94a3b8;
+    --border-color: #334155;
+    --input-bg: #334155;
+    --input-border: #475569;
+    --hover-bg: #334155;
+  }
+  
+  body {
+    background-color: var(--bg-main);
+    transition: background-color 0.2s ease;
+  }

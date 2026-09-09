@@ -1,17 +1,18 @@
 .navbar {
     height: 60px;
-    background-color: #ffffff;
-    border-bottom: 1px solid #e2e8f0;
+    background-color: var(--bg-card);
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 0 24px;
+    transition: background-color 0.2s ease;
   }
   
   .navbar-left h3 {
     font-size: 16px;
     font-weight: 600;
-    color: #1e293b;
+    color: var(--text-primary);
     margin: 0;
   }
   
@@ -31,7 +32,7 @@
   }
   
   .theme-toggle:hover {
-    background-color: #f1f5f9;
+    background-color: var(--hover-bg);
   }
   
   .user-info {
@@ -39,7 +40,7 @@
     align-items: center;
     gap: 8px;
     font-size: 14px;
-    color: #1e293b;
+    color: var(--text-primary);
   }
   
   .user-avatar {
