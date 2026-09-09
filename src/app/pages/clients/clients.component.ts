@@ -27,7 +27,10 @@ export class ClientsComponent implements OnInit {
   }
 
   loadClients(): void {
-    this.clients = this.clientService.getAll();
+    this.clientService.getAll().subscribe({
+      next: (data) => this.clients = data,
+      error: (err) => console.error('Erreur chargement clients:', err)
+    });
   }
 
   get filteredClients(): Client[] {
@@ -71,19 +74,30 @@ export class ClientsComponent implements OnInit {
     }
 
     if (this.isEditMode && this.editingId !== null) {
-      this.clientService.update(this.editingId, this.currentClient);
+      this.clientService.update(this.editingId, this.currentClient).subscribe({
+        next: () => {
+          this.loadClients();
+          this.closeModal();
+        },
+        error: (err) => console.error('Erreur modification client:', err)
+      });
     } else {
-      this.clientService.add(this.currentClient);
+      this.clientService.add(this.currentClient).subscribe({
+        next: () => {
+          this.loadClients();
+          this.closeModal();
+        },
+        error: (err) => console.error('Erreur ajout client:', err)
+      });
     }
-
-    this.loadClients();
-    this.closeModal();
   }
 
   deleteClient(id: number): void {
     if (confirm('Voulez-vous vraiment supprimer ce client ?')) {
-      this.clientService.delete(id);
-      this.loadClients();
+      this.clientService.delete(id).subscribe({
+        next: () => this.loadClients(),
+        error: (err) => console.error('Erreur suppression client:', err)
+      });
     }
   }
 }
