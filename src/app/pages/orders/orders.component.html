@@ -1,0 +1,135 @@
+<div class="orders-page">
+    <div class="page-header">
+      <h1 class="page-title">Commandes</h1>
+      <button class="btn-primary" (click)="openAddModal()">+ Ajouter une commande</button>
+    </div>
+  
+    <div class="filters-bar">
+      <input
+        type="text"
+        class="search-input"
+        placeholder="Rechercher par numéro ou client..."
+        [(ngModel)]="searchTerm"
+      />
+  
+      <select class="filter-select" [(ngModel)]="selectedStatus">
+        <option value="Tous">Tous les statuts</option>
+        <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+      </select>
+    </div>
+  
+    <div class="legend">
+      <span class="legend-item"><span class="dot dot-late"></span> En retard</span>
+      <span class="legend-item"><span class="dot dot-near"></span> Livraison proche</span>
+    </div>
+  
+    <div class="panel">
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>N° Commande</th>
+            <th>Client</th>
+            <th>Produit</th>
+            <th>Qté</th>
+            <th>Taille</th>
+            <th>Couleur</th>
+            <th>Date commande</th>
+            <th>Date livraison</th>
+            <th>Statut</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of filteredOrders"
+              [ngClass]="{
+                'row-late': isLate(order),
+                'row-near': isNearDeadline(order)
+              }">
+            <td>{{ order.numero }}</td>
+            <td>{{ order.client }}</td>
+            <td>{{ order.produit }}</td>
+            <td>{{ order.quantite }}</td>
+            <td>{{ order.taille }}</td>
+            <td>{{ order.couleur }}</td>
+            <td>{{ order.dateCommande }}</td>
+            <td>{{ order.dateLivraison }}</td>
+            <td>
+              <span class="badge" [ngClass]="getStatusClass(order.statut)">
+                {{ order.statut }}
+              </span>
+            </td>
+            <td class="actions-cell">
+              <button class="btn-icon" (click)="openEditModal(order)">✏️</button>
+              <button class="btn-icon delete" (click)="deleteOrder(order.id)">🗑️</button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredOrders.length === 0">
+            <td colspan="10" class="empty-row">Aucune commande trouvée.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <!-- Modal Ajout / Modification -->
+  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
+    <div class="modal-box" (click)="$event.stopPropagation()">
+      <h2>{{ isEditMode ? 'Modifier la commande' : 'Ajouter une commande' }}</h2>
+  
+      <div class="form-row">
+        <div class="form-group">
+          <label>N° Commande</label>
+          <input type="text" [(ngModel)]="currentOrder.numero" placeholder="CMD-0000" />
+        </div>
+        <div class="form-group">
+          <label>Client</label>
+          <input type="text" [(ngModel)]="currentOrder.client" placeholder="Nom du client" />
+        </div>
+      </div>
+  
+      <div class="form-row">
+        <div class="form-group">
+          <label>Produit</label>
+          <input type="text" [(ngModel)]="currentOrder.produit" placeholder="Produit" />
+        </div>
+        <div class="form-group">
+          <label>Quantité</label>
+          <input type="number" [(ngModel)]="currentOrder.quantite" placeholder="1" />
+        </div>
+      </div>
+  
+      <div class="form-row">
+        <div class="form-group">
+          <label>Taille</label>
+          <input type="text" [(ngModel)]="currentOrder.taille" placeholder="Taille" />
+        </div>
+        <div class="form-group">
+          <label>Couleur</label>
+          <input type="text" [(ngModel)]="currentOrder.couleur" placeholder="Couleur" />
+        </div>
+      </div>
+  
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date commande</label>
+          <input type="text" [(ngModel)]="currentOrder.dateCommande" placeholder="JJ/MM/AAAA" />
+        </div>
+        <div class="form-group">
+          <label>Date livraison</label>
+          <input type="text" [(ngModel)]="currentOrder.dateLivraison" placeholder="JJ/MM/AAAA" />
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label>Statut</label>
+        <select [(ngModel)]="currentOrder.statut">
+          <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+        </select>
+      </div>
+  
+      <div class="modal-actions">
+        <button class="btn-secondary" (click)="closeModal()">Annuler</button>
+        <button class="btn-primary" (click)="saveOrder()">Enregistrer</button>
+      </div>
+    </div>
+  </div>

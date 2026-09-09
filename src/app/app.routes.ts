@@ -4,6 +4,7 @@ import { MainLayoutComponent } from './components/main-layout/main-layout.compon
 import { DashboardComponent } from './pages/dashboard/dashboard.component';
 import { ClientsComponent } from './pages/clients/clients.component';
 import { ProductsComponent } from './pages/products/products.component';
+import { OrdersComponent } from './pages/orders/orders.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -15,6 +16,7 @@ export const routes: Routes = [
       { path: 'clients', component: ClientsComponent },
       { path: 'products', component: ProductsComponent },
       { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'orders', component: OrdersComponent },
     ],
   },
   { path: '**', redirectTo: 'login' },
