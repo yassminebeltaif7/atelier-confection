@@ -32,7 +32,10 @@ export class ProductsComponent implements OnInit {
   }
 
   loadProducts(): void {
-    this.products = this.productService.getAll();
+    this.productService.getAll().subscribe({
+      next: (data) => this.products = data,
+      error: (err) => console.error('Erreur chargement produits:', err)
+    });
   }
 
   get filteredProducts(): Product[] {
@@ -89,19 +92,30 @@ export class ProductsComponent implements OnInit {
     }
 
     if (this.isEditMode && this.editingId !== null) {
-      this.productService.update(this.editingId, this.currentProduct);
+      this.productService.update(this.editingId, this.currentProduct).subscribe({
+        next: () => {
+          this.loadProducts();
+          this.closeModal();
+        },
+        error: (err) => console.error('Erreur modification produit:', err)
+      });
     } else {
-      this.productService.add(this.currentProduct);
+      this.productService.add(this.currentProduct).subscribe({
+        next: () => {
+          this.loadProducts();
+          this.closeModal();
+        },
+        error: (err) => console.error('Erreur ajout produit:', err)
+      });
     }
-
-    this.loadProducts();
-    this.closeModal();
   }
 
   deleteProduct(id: number): void {
     if (confirm('Voulez-vous vraiment supprimer ce produit ?')) {
-      this.productService.delete(id);
-      this.loadProducts();
+      this.productService.delete(id).subscribe({
+        next: () => this.loadProducts(),
+        error: (err) => console.error('Erreur suppression produit:', err)
+      });
     }
   }
 }

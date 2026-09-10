@@ -33,7 +33,10 @@ export class OrdersComponent implements OnInit {
   }
 
   loadOrders(): void {
-    this.orders = this.orderService.getAll();
+    this.orderService.getAll().subscribe({
+      next: (data) => this.orders = data,
+      error: (err) => console.error('Erreur chargement commandes:', err)
+    });
   }
 
   get filteredOrders(): Order[] {
@@ -111,19 +114,30 @@ export class OrdersComponent implements OnInit {
     }
 
     if (this.isEditMode && this.editingId !== null) {
-      this.orderService.update(this.editingId, this.currentOrder);
+      this.orderService.update(this.editingId, this.currentOrder).subscribe({
+        next: () => {
+          this.loadOrders();
+          this.closeModal();
+        },
+        error: (err) => console.error('Erreur modification commande:', err)
+      });
     } else {
-      this.orderService.add(this.currentOrder);
+      this.orderService.add(this.currentOrder).subscribe({
+        next: () => {
+          this.loadOrders();
+          this.closeModal();
+        },
+        error: (err) => console.error('Erreur ajout commande:', err)
+      });
     }
-
-    this.loadOrders();
-    this.closeModal();
   }
 
   deleteOrder(id: number): void {
     if (confirm('Voulez-vous vraiment supprimer cette commande ?')) {
-      this.orderService.delete(id);
-      this.loadOrders();
+      this.orderService.delete(id).subscribe({
+        next: () => this.loadOrders(),
+        error: (err) => console.error('Erreur suppression commande:', err)
+      });
     }
   }
 }
