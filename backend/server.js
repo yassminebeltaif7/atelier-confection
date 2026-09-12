@@ -9,6 +9,7 @@ const orderRoutes = require("./routes/orderRoutes");
 const productionRoutes = require("./routes/productionRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const stockRoutes = require("./routes/stockRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/productions", productionRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/stock", stockRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 const PORT = 3000;
 
