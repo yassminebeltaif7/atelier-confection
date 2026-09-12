@@ -34,12 +34,22 @@ export class StockComponent implements OnInit {
   constructor(private stockService: StockService) {}
 
   ngOnInit(): void {
-    this.loadData();
+    this.loadItems();
+    this.loadMovements();
   }
 
-  loadData(): void {
-    this.items = this.stockService.getAllItems();
-    this.movements = this.stockService.getAllMovements();
+  loadItems(): void {
+    this.stockService.getAllItems().subscribe({
+      next: (data) => this.items = data,
+      error: (err) => console.error('Erreur chargement articles:', err)
+    });
+  }
+
+  loadMovements(): void {
+    this.stockService.getAllMovements().subscribe({
+      next: (data) => this.movements = data,
+      error: (err) => console.error('Erreur chargement mouvements:', err)
+    });
   }
 
   get filteredItems(): StockItem[] {
@@ -80,19 +90,30 @@ export class StockComponent implements OnInit {
     if (!this.currentItem.nom) return;
 
     if (this.isEditMode && this.editingId !== null) {
-      this.stockService.updateItem(this.editingId, this.currentItem);
+      this.stockService.updateItem(this.editingId, this.currentItem).subscribe({
+        next: () => {
+          this.loadItems();
+          this.closeItemModal();
+        },
+        error: (err) => console.error('Erreur modification article:', err)
+      });
     } else {
-      this.stockService.addItem(this.currentItem);
+      this.stockService.addItem(this.currentItem).subscribe({
+        next: () => {
+          this.loadItems();
+          this.closeItemModal();
+        },
+        error: (err) => console.error('Erreur ajout article:', err)
+      });
     }
-
-    this.loadData();
-    this.closeItemModal();
   }
 
   deleteItem(id: number): void {
     if (confirm('Voulez-vous vraiment supprimer cet article ?')) {
-      this.stockService.deleteItem(id);
-      this.loadData();
+      this.stockService.deleteItem(id).subscribe({
+        next: () => this.loadItems(),
+        error: (err) => console.error('Erreur suppression article:', err)
+      });
     }
   }
 
@@ -112,8 +133,13 @@ export class StockComponent implements OnInit {
   saveMovement(): void {
     if (this.movementItemId === null || this.movementQuantity <= 0) return;
 
-    this.stockService.addMovement(this.movementItemId, this.movementType, this.movementQuantity, this.movementDate);
-    this.loadData();
-    this.closeMovementModal();
+    this.stockService.addMovement(this.movementItemId, this.movementType, this.movementQuantity, this.movementDate).subscribe({
+      next: () => {
+        this.loadItems();
+        this.loadMovements();
+        this.closeMovementModal();
+      },
+      error: (err) => console.error('Erreur mouvement stock:', err)
+    });
   }
 }

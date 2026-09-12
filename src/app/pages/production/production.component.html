@@ -1,90 +1,265 @@
-<div class="production-page">
+<<div class="production-page">
+
+    <!-- Header -->
     <div class="page-header">
       <h1 class="page-title">Production</h1>
-      <button class="btn-primary" (click)="openAddModal()">+ Ajouter une production</button>
+  
+      <button class="btn-primary" (click)="openAddModal()">
+        + Ajouter une production
+      </button>
     </div>
   
+  
+    <!-- Kanban Board -->
     <div class="kanban-board">
+  
+      <!-- Chaque étape -->
       <div class="kanban-column" *ngFor="let stage of stages">
+  
+        <!-- Header de la colonne -->
         <div class="column-header">
           <h3>{{ stage }}</h3>
-          <span class="column-count">{{ getByStage(stage).length }}</span>
+  
+          <span class="column-count">
+            {{ getByStage(stage).length }}
+          </span>
         </div>
   
+  
+        <!-- Productions -->
         <div class="column-cards">
-          <div class="production-card" *ngFor="let prod of getByStage(stage)">
+  
+          <div
+            class="production-card"
+            *ngFor="let prod of getByStage(stage)"
+          >
+  
+            <!-- Card Header -->
             <div class="card-header">
-              <span class="card-order">{{ prod.commandeNumero }}</span>
-              <button class="btn-icon delete" (click)="deleteProduction(prod.id)">🗑️</button>
-            </div>
-            <p class="card-product">{{ prod.produit }}</p>
-            <p class="card-qty">Qté : {{ prod.quantite }}</p>
-            <p class="card-date">Fin prévue : {{ prod.datePrevueFin }}</p>
   
+              <span class="card-order">
+                {{ prod.commandeNumero }}
+              </span>
+  
+              <button
+                class="btn-icon delete"
+                (click)="deleteProduction(prod.id)"
+              >
+                🗑️
+              </button>
+  
+            </div>
+  
+  
+            <!-- Informations -->
+            <p class="card-product">
+              {{ prod.produit }}
+            </p>
+  
+            <p class="card-qty">
+              Qté : {{ prod.quantite }}
+            </p>
+  
+            <p class="card-date">
+              Fin prévue : {{ prod.datePrevueFin }}
+            </p>
+  
+  
+            <!-- Actions -->
             <div class="card-actions">
+  
+              <!-- Précédent -->
               <button
                 class="btn-move"
-                (click)="movePrevious(prod.id)"
+                (click)="movePrevious(prod)"
                 [disabled]="isFirstStage(prod.etapeActuelle)"
-              >← Précédent</button>
+              >
+                ← Précédent
+              </button>
   
-              <button class="btn-icon" (click)="openEditModal(prod)">✏️</button>
   
+              <!-- Modifier -->
+              <button
+                class="btn-icon"
+                (click)="openEditModal(prod)"
+              >
+                ✏️
+              </button>
+  
+  
+              <!-- Suivant -->
               <button
                 class="btn-move"
-                (click)="moveNext(prod.id)"
+                (click)="moveNext(prod)"
                 [disabled]="isLastStage(prod.etapeActuelle)"
-              >Suivant →</button>
+              >
+                Suivant →
+              </button>
+  
             </div>
+  
           </div>
   
-          <p class="empty-column" *ngIf="getByStage(stage).length === 0">Aucune production</p>
+  
+          <!-- Colonne vide -->
+          <p
+            class="empty-column"
+            *ngIf="getByStage(stage).length === 0"
+          >
+            Aucune production
+          </p>
+  
         </div>
+  
       </div>
+  
     </div>
+  
   </div>
   
+  
+  
+  <!-- ================================================= -->
   <!-- Modal Ajout / Modification -->
-  <div class="modal-overlay" *ngIf="showModal" (click)="closeModal()">
-    <div class="modal-box" (click)="$event.stopPropagation()">
-      <h2>{{ isEditMode ? 'Modifier la production' : 'Ajouter une production' }}</h2>
+  <!-- ================================================= -->
   
+  <div
+    class="modal-overlay"
+    *ngIf="showModal"
+    (click)="closeModal()"
+  >
+  
+    <div
+      class="modal-box"
+      (click)="$event.stopPropagation()"
+    >
+  
+      <!-- Titre -->
+      <h2>
+        {{
+          isEditMode
+            ? 'Modifier la production'
+            : 'Ajouter une production'
+        }}
+      </h2>
+  
+  
+      <!-- Numéro commande -->
       <div class="form-group">
+  
         <label>N° Commande</label>
-        <input type="text" [(ngModel)]="currentProduction.commandeNumero" placeholder="CMD-0000" />
+  
+        <input
+          type="text"
+          [(ngModel)]="currentProduction.commandeNumero"
+          placeholder="CMD-0000"
+        />
+  
       </div>
   
+  
+      <!-- Produit -->
       <div class="form-group">
+  
         <label>Produit</label>
-        <input type="text" [(ngModel)]="currentProduction.produit" placeholder="Produit" />
+  
+        <input
+          type="text"
+          [(ngModel)]="currentProduction.produit"
+          placeholder="Produit"
+        />
+  
       </div>
   
+  
+      <!-- Quantité -->
       <div class="form-group">
+  
         <label>Quantité</label>
-        <input type="number" [(ngModel)]="currentProduction.quantite" placeholder="1" />
+  
+        <input
+          type="number"
+          [(ngModel)]="currentProduction.quantite"
+          placeholder="1"
+        />
+  
       </div>
   
+  
+      <!-- Étape actuelle -->
       <div class="form-group">
+  
         <label>Étape actuelle</label>
-        <select [(ngModel)]="currentProduction.etapeActuelle">
-          <option *ngFor="let s of stages" [value]="s">{{ s }}</option>
+  
+        <select
+          [(ngModel)]="currentProduction.etapeActuelle"
+        >
+  
+          <option
+            *ngFor="let s of stages"
+            [value]="s"
+          >
+            {{ s }}
+          </option>
+  
         </select>
+  
       </div>
   
+  
+      <!-- Dates -->
       <div class="form-row">
+  
+        <!-- Date début -->
         <div class="form-group">
+  
           <label>Date début</label>
-          <input type="text" [(ngModel)]="currentProduction.dateDebut" placeholder="JJ/MM/AAAA" />
+  
+          <input
+            type="text"
+            [(ngModel)]="currentProduction.dateDebut"
+            placeholder="JJ/MM/AAAA"
+          />
+  
         </div>
+  
+  
+        <!-- Date fin -->
         <div class="form-group">
+  
           <label>Fin prévue</label>
-          <input type="text" [(ngModel)]="currentProduction.datePrevueFin" placeholder="JJ/MM/AAAA" />
+  
+          <input
+            type="text"
+            [(ngModel)]="currentProduction.datePrevueFin"
+            placeholder="JJ/MM/AAAA"
+          />
+  
         </div>
+  
       </div>
   
+  
+      <!-- Boutons modal -->
       <div class="modal-actions">
-        <button class="btn-secondary" (click)="closeModal()">Annuler</button>
-        <button class="btn-primary" (click)="saveProduction()">Enregistrer</button>
+  
+        <button
+          class="btn-secondary"
+          (click)="closeModal()"
+        >
+          Annuler
+        </button>
+  
+  
+        <button
+          class="btn-primary"
+          (click)="saveProduction()"
+        >
+          Enregistrer
+        </button>
+  
       </div>
+  
     </div>
+  
   </div>

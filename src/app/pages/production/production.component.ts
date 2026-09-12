@@ -30,21 +30,40 @@ export class ProductionComponent implements OnInit {
   }
 
   loadProductions(): void {
-    this.productions = this.productionService.getAll();
+    this.productionService.getAll().subscribe({
+      next: (data) => this.productions = data,
+      error: (err) => console.error('Erreur chargement productions:', err)
+    });
   }
 
   getByStage(stage: ProductionStage): Production[] {
     return this.productions.filter(p => p.etapeActuelle === stage);
   }
 
-  moveNext(id: number): void {
-    this.productionService.moveToNextStage(id);
-    this.loadProductions();
+  moveNext(production: Production): void {
+    const nextStage = this.productionService.getNextStage(production.etapeActuelle);
+    if (!nextStage) return;
+
+    const updated = { ...production, etapeActuelle: nextStage };
+    const { id, ...data } = updated;
+
+    this.productionService.update(production.id, data).subscribe({
+      next: () => this.loadProductions(),
+      error: (err) => console.error('Erreur déplacement production:', err)
+    });
   }
 
-  movePrevious(id: number): void {
-    this.productionService.moveToPreviousStage(id);
-    this.loadProductions();
+  movePrevious(production: Production): void {
+    const prevStage = this.productionService.getPreviousStage(production.etapeActuelle);
+    if (!prevStage) return;
+
+    const updated = { ...production, etapeActuelle: prevStage };
+    const { id, ...data } = updated;
+
+    this.productionService.update(production.id, data).subscribe({
+      next: () => this.loadProductions(),
+      error: (err) => console.error('Erreur déplacement production:', err)
+    });
   }
 
   isFirstStage(stage: ProductionStage): boolean {
@@ -88,19 +107,30 @@ export class ProductionComponent implements OnInit {
     }
 
     if (this.isEditMode && this.editingId !== null) {
-      this.productionService.update(this.editingId, this.currentProduction);
+      this.productionService.update(this.editingId, this.currentProduction).subscribe({
+        next: () => {
+          this.loadProductions();
+          this.closeModal();
+        },
+        error: (err) => console.error('Erreur modification production:', err)
+      });
     } else {
-      this.productionService.add(this.currentProduction);
+      this.productionService.add(this.currentProduction).subscribe({
+        next: () => {
+          this.loadProductions();
+          this.closeModal();
+        },
+        error: (err) => console.error('Erreur ajout production:', err)
+      });
     }
-
-    this.loadProductions();
-    this.closeModal();
   }
 
   deleteProduction(id: number): void {
     if (confirm('Voulez-vous vraiment supprimer cette production ?')) {
-      this.productionService.delete(id);
-      this.loadProductions();
+      this.productionService.delete(id).subscribe({
+        next: () => this.loadProductions(),
+        error: (err) => console.error('Erreur suppression production:', err)
+      });
     }
   }
 }

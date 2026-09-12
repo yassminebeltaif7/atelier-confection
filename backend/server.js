@@ -6,6 +6,9 @@ require("./config/db");
 const clientRoutes = require("./routes/clientRoutes");
 const productRoutes = require("./routes/productRoutes");
 const orderRoutes = require("./routes/orderRoutes");
+const productionRoutes = require("./routes/productionRoutes");
+const taskRoutes = require("./routes/taskRoutes");
+const stockRoutes = require("./routes/stockRoutes");
 
 const app = express();
 
@@ -21,6 +24,9 @@ app.get("/", (req, res) => {
 app.use("/api/clients", clientRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/productions", productionRoutes);
+app.use("/api/tasks", taskRoutes);
+app.use("/api/stock", stockRoutes);
 
 const PORT = 3000;
 

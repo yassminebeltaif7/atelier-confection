@@ -35,7 +35,10 @@ export class TasksComponent implements OnInit {
   }
 
   loadTasks(): void {
-    this.tasks = this.taskService.getAll();
+    this.taskService.getAll().subscribe({
+      next: (data) => this.tasks = data,
+      error: (err) => console.error('Erreur chargement tâches:', err)
+    });
   }
 
   get filteredTasks(): Task[] {
@@ -119,19 +122,30 @@ export class TasksComponent implements OnInit {
     }
 
     if (this.isEditMode && this.editingId !== null) {
-      this.taskService.update(this.editingId, this.currentTask);
+      this.taskService.update(this.editingId, this.currentTask).subscribe({
+        next: () => {
+          this.loadTasks();
+          this.closeModal();
+        },
+        error: (err) => console.error('Erreur modification tâche:', err)
+      });
     } else {
-      this.taskService.add(this.currentTask);
+      this.taskService.add(this.currentTask).subscribe({
+        next: () => {
+          this.loadTasks();
+          this.closeModal();
+        },
+        error: (err) => console.error('Erreur ajout tâche:', err)
+      });
     }
-
-    this.loadTasks();
-    this.closeModal();
   }
 
   deleteTask(id: number): void {
     if (confirm('Voulez-vous vraiment supprimer cette tâche ?')) {
-      this.taskService.delete(id);
-      this.loadTasks();
+      this.taskService.delete(id).subscribe({
+        next: () => this.loadTasks(),
+        error: (err) => console.error('Erreur suppression tâche:', err)
+      });
     }
   }
 }

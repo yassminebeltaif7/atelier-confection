@@ -1,38 +1,30 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { Task } from '../models/task';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TaskService {
-  private tasks: Task[] = [
-    { id: 1, titre: 'Vérifier les mesures', description: 'Vérifier les mesures avant la coupe', productionAssociee: 'CMD-0125', responsable: 'Amel', priorite: 'Haute', statut: 'En cours', dateDebut: '08/09/2026', dateLimite: '10/09/2026' },
-    { id: 2, titre: 'Couper le tissu', description: 'Découpe selon patron', productionAssociee: 'CMD-0126', responsable: 'Sami', priorite: 'Moyenne', statut: 'À faire', dateDebut: '09/09/2026', dateLimite: '11/09/2026' },
-    { id: 3, titre: 'Contrôle qualité final', description: 'Vérifier la qualité de la couture', productionAssociee: 'CMD-0122', responsable: 'Amel', priorite: 'Haute', statut: 'À faire', dateDebut: '07/09/2026', dateLimite: '09/09/2026' },
-    { id: 4, titre: 'Préparer les machines', description: 'Entretien avant démarrage', productionAssociee: 'CMD-0124', responsable: 'Karim', priorite: 'Basse', statut: 'Terminé', dateDebut: '05/09/2026', dateLimite: '06/09/2026' },
-    { id: 5, titre: 'Emballage commande', description: 'Emballage final avant livraison', productionAssociee: 'CMD-0121', responsable: 'Sami', priorite: 'Moyenne', statut: 'Terminé', dateDebut: '30/08/2026', dateLimite: '31/08/2026' },
-  ];
+  private apiUrl = 'http://localhost:3000/api/tasks';
 
-  private nextId = 6;
+  constructor(private http: HttpClient) {}
 
-  getAll(): Task[] {
-    return this.tasks;
+  getAll(): Observable<Task[]> {
+    return this.http.get<Task[]>(this.apiUrl);
   }
 
-  add(task: Omit<Task, 'id'>): void {
-    const newTask: Task = { id: this.nextId++, ...task };
-    this.tasks.push(newTask);
+  add(task: Omit<Task, 'id'>): Observable<Task> {
+    return this.http.post<Task>(this.apiUrl, task);
   }
 
-  update(id: number, updatedTask: Omit<Task, 'id'>): void {
-    const index = this.tasks.findIndex(t => t.id === id);
-    if (index !== -1) {
-      this.tasks[index] = { id, ...updatedTask };
-    }
+  update(id: number, task: Omit<Task, 'id'>): Observable<Task> {
+    return this.http.put<Task>(`${this.apiUrl}/${id}`, task);
   }
 
-  delete(id: number): void {
-    this.tasks = this.tasks.filter(t => t.id !== id);
+  delete(id: number): Observable<any> {
+    return this.http.delete(`${this.apiUrl}/${id}`);
   }
 
   private parseDate(dateStr: string): Date {
