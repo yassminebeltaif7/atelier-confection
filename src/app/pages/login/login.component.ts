@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-login',
@@ -15,15 +16,17 @@ export class LoginComponent {
   password = '';
   errorMessage = '';
 
-  constructor(private router: Router) {}
+  constructor(private authService: AuthService, private router: Router) {}
 
   onLogin() {
-    // Pour l'instant, une vérification simple en dur (à remplacer plus tard par un vrai appel API)
-    if (this.email === 'admin@atelier.com' && this.password === 'admin123') {
-      this.errorMessage = '';
-      this.router.navigate(['/dashboard']);
-    } else {
-      this.errorMessage = 'Email ou mot de passe incorrect.';
-    }
+    this.authService.login(this.email, this.password).subscribe({
+      next: () => {
+        this.errorMessage = '';
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err) => {
+        this.errorMessage = 'Email ou mot de passe incorrect.';
+      }
+    });
   }
 }

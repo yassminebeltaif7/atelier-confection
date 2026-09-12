@@ -1,4 +1,6 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 export interface DashboardStats {
   totalOrders: number;
@@ -35,43 +37,23 @@ export interface StockAlert {
   providedIn: 'root'
 })
 export class DashboardService {
+  private apiUrl = 'http://localhost:3000/api/dashboard';
 
-  getStats(): DashboardStats {
-    return {
-      totalOrders: 128,
-      ordersInProgress: 24,
-      ordersCompleted: 96,
-      ordersLate: 8,
-      totalProducts: 65,
-      lowStockProducts: 6,
-      tasksInProgress: 15,
-      tasksLate: 3,
-    };
+  constructor(private http: HttpClient) {}
+
+  getStats(): Observable<DashboardStats> {
+    return this.http.get<DashboardStats>(`${this.apiUrl}/stats`);
   }
 
-  getRecentOrders(): RecentOrder[] {
-    return [
-      { orderNumber: 'CMD-0125', client: 'Amine Ben Salah', product: 'Chemise Homme', status: 'En production', deliveryDate: '12/09/2026' },
-      { orderNumber: 'CMD-0124', client: 'Sarra Trabelsi', product: 'Robe Été', status: 'Nouvelle', deliveryDate: '15/09/2026' },
-      { orderNumber: 'CMD-0123', client: 'Karim Jaziri', product: 'Veste Costume', status: 'Livrée', deliveryDate: '05/09/2026' },
-      { orderNumber: 'CMD-0122', client: 'Nour Hammami', product: 'Pantalon', status: 'En retard', deliveryDate: '02/09/2026' },
-      { orderNumber: 'CMD-0121', client: 'Yassine Ferjani', product: 'T-shirt Sport', status: 'Terminée', deliveryDate: '01/09/2026' },
-    ];
+  getRecentOrders(): Observable<RecentOrder[]> {
+    return this.http.get<RecentOrder[]>(`${this.apiUrl}/recent-orders`);
   }
 
-  getUpcomingTasks(): UpcomingTask[] {
-    return [
-      { title: 'Vérifier les mesures - CMD-0125', dueDate: '10/09/2026', priority: 'Haute' },
-      { title: 'Couper le tissu - CMD-0124', dueDate: '11/09/2026', priority: 'Moyenne' },
-      { title: 'Contrôle qualité - CMD-0123', dueDate: '09/09/2026', priority: 'Haute' },
-    ];
+  getUpcomingTasks(): Observable<UpcomingTask[]> {
+    return this.http.get<UpcomingTask[]>(`${this.apiUrl}/upcoming-tasks`);
   }
 
-  getStockAlerts(): StockAlert[] {
-    return [
-      { productName: 'Tissu Coton Blanc', currentQuantity: 5, minQuantity: 20 },
-      { productName: 'Fil Noir', currentQuantity: 8, minQuantity: 15 },
-      { productName: 'Boutons Métal', currentQuantity: 12, minQuantity: 50 },
-    ];
+  getStockAlerts(): Observable<StockAlert[]> {
+    return this.http.get<StockAlert[]>(`${this.apiUrl}/stock-alerts`);
   }
 }

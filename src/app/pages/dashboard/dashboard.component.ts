@@ -16,7 +16,10 @@ import {
   styleUrl: './dashboard.component.css'
 })
 export class DashboardComponent implements OnInit {
-  stats!: DashboardStats;
+  stats: DashboardStats = {
+    totalOrders: 0, ordersInProgress: 0, ordersCompleted: 0, ordersLate: 0,
+    totalProducts: 0, lowStockProducts: 0, tasksInProgress: 0, tasksLate: 0
+  };
   recentOrders: RecentOrder[] = [];
   upcomingTasks: UpcomingTask[] = [];
   stockAlerts: StockAlert[] = [];
@@ -24,10 +27,25 @@ export class DashboardComponent implements OnInit {
   constructor(private dashboardService: DashboardService) {}
 
   ngOnInit(): void {
-    this.stats = this.dashboardService.getStats();
-    this.recentOrders = this.dashboardService.getRecentOrders();
-    this.upcomingTasks = this.dashboardService.getUpcomingTasks();
-    this.stockAlerts = this.dashboardService.getStockAlerts();
+    this.dashboardService.getStats().subscribe({
+      next: (data) => this.stats = data,
+      error: (err) => console.error('Erreur chargement stats:', err)
+    });
+
+    this.dashboardService.getRecentOrders().subscribe({
+      next: (data) => this.recentOrders = data,
+      error: (err) => console.error('Erreur chargement commandes récentes:', err)
+    });
+
+    this.dashboardService.getUpcomingTasks().subscribe({
+      next: (data) => this.upcomingTasks = data,
+      error: (err) => console.error('Erreur chargement tâches à venir:', err)
+    });
+
+    this.dashboardService.getStockAlerts().subscribe({
+      next: (data) => this.stockAlerts = data,
+      error: (err) => console.error('Erreur chargement alertes stock:', err)
+    });
   }
 
   getStatusClass(status: string): string {

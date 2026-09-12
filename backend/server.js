@@ -10,6 +10,7 @@ const productionRoutes = require("./routes/productionRoutes");
 const taskRoutes = require("./routes/taskRoutes");
 const stockRoutes = require("./routes/stockRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
@@ -29,6 +30,7 @@ app.use("/api/productions", productionRoutes);
 app.use("/api/tasks", taskRoutes);
 app.use("/api/stock", stockRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/auth", authRoutes);
 
 const PORT = 3000;
 
